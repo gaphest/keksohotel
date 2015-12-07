@@ -94,12 +94,8 @@
      */
     var backgroundImage = new Image();
 
-    // Контекст обработчика по умолчанию — объект, на котором
-    // сработал обработчик.
     backgroundImage.onload = function() {
       clearTimeout(imageLoadTimeout);
-      // this в этом случае является ссылкой на изображение,
-      // хотя должен быть ссылкой на Hotel.
       this.element.style.backgroundImage = 'url(\'' + backgroundImage.src + '\')';
     }.bind(this);
 
@@ -116,7 +112,7 @@
     var imageLoadTimeout = setTimeout(function() {
       backgroundImage.src = ''; // Прекращаем загрузку
       this.element.classList.add('hotel-nophoto'); // Показываем ошибку
-    }, IMAGE_TIMEOUT);
+    }.bind(this), IMAGE_TIMEOUT);
 
     // Изменение src у изображения начинает загрузку.
     backgroundImage.src = this._data.preview;
