@@ -58,20 +58,20 @@
    */
   function Hotel(data) {
     this._data = data;
+    this._onClick = this._onClick.bind(this);
   }
 
   /**
    * Создание элемента отеля из шаблона
+   * @param {Node=} container
    */
-  Hotel.prototype.render = function() {
+  Hotel.prototype.render = function(container) {
     var template = document.querySelector('#hotel-template');
     var hotelRating = this._data.rating || 6.0;
 
-    if ('content' in template) {
-      this.element = template.content.children[0].cloneNode(true);
-    } else {
-      this.element = template.children[0].cloneNode(true);
-    }
+    this.element = 'content' in template ?
+        template.content.children[0].cloneNode(true) :
+        template.content.children[0].cloneNode(true);
 
     this.element.querySelector('.hotel-stars').classList.add(starsClassName[this._data.stars]);
     this.element.querySelector('.hotel-rating').classList.add(ratingClassName[Math.floor(hotelRating)]);
@@ -110,13 +110,56 @@
     var IMAGE_TIMEOUT = 10000;
 
     var imageLoadTimeout = setTimeout(function() {
-      backgroundImage.src = ''; // Прекращаем загрузку
-      this.element.classList.add('hotel-nophoto'); // Показываем ошибку
+      backgroundImage.src = '';
+      this.element.classList.add('hotel-nophoto');
     }.bind(this), IMAGE_TIMEOUT);
 
-    // Изменение src у изображения начинает загрузку.
     backgroundImage.src = this._data.preview;
+
+    if (container) {
+      container.appendChild(this.element);
+      this.container = container;
+    }
+
+    this.element.addEventListener('click', this._onClick);
   };
+
+  /**
+   * Удаление элемента со страницы и удаление обработчиков.
+   */
+  Hotel.prototype.remove = function() {
+    if (this.container) {
+      this.container.removeChild(this.element);
+      this.container = null;
+    }
+
+    this.element.removeEventListener('click', this._onClick);
+  };
+
+  /**
+   * Обработчик клика по блоку отеля. Используется делегирование, на отель
+   * добавлен один обработчик события, а какие действия выполнять, в зависимости
+   * от того на какой элемент произошел клик, определяется внутри обработчика.
+   * @param {Event} evt
+   * @private
+   */
+  Hotel.prototype._onClick = function(evt) {
+    // Галерея должна показываться только по клику на фон элемента, который
+    // содержит фотографию.
+    if (evt.target.classList.contains('hotel') && !this.element.classList.contains('hotel-nophoto')) {
+      if (typeof this.onGalleryClick === 'function') {
+        this.onGalleryClick();
+      }
+    }
+  };
+
+  /**
+   * Функция обратного вызова при клике на фон отеля. Переопределяется
+   * снаружи для того, чтобы описать реакцию внешнего мира. Похоже
+   * на события, но сам механизм событий тут не используется.
+   * @type {Function}
+   */
+  Hotel.prototype.onGalleryClick = null;
 
   window.Hotel = Hotel;
 })();

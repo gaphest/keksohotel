@@ -42,6 +42,7 @@
 </div>
 
 <div class="map map-hidden">
+  <div class="map-container"></div>
   <span class="map-switch"></span>
   <span class="map-close"></span>
 </div>
@@ -83,12 +84,16 @@
 </footer>
 
 <div class="overlays">
-  <div class="gallery-overlay hidden">
-    <div class="gallery-overlay-close" role="button">&times;</div>
-    <div class="gallery-overlay-preview"></div>
-    <div class="gallery-overlay-controls">
-      <div class="gallery-overlay-control gallery-overlay-control-left"></div>
-      <div class="gallery-overlay-control gallery-overlay-control-right"></div>
+  <div class="gallery hidden">
+    <div class="gallery-close" role="button">&times;</div>
+    <div class="gallery-name">
+      <span class="gallery-stars"></span>
+    </div>
+    <div class="gallery-preview"></div>
+    <div class="gallery-controls">
+      <div class="gallery-control gallery-control-left"></div>
+      <div class="gallery-thumbnails"></div>
+      <div class="gallery-control gallery-control-right"></div>
     </div>
   </div>
 </div>
@@ -112,6 +117,7 @@
 <script src="lib/cookies.js"></script>
 <script src="js/form-validation.js"></script>
 <script src="js/gallery.js"></script>
+<script src="js/map.js"></script>
 <script src="js/hotel.js"></script>
 <script src="js/hotels-list.js"></script>
 

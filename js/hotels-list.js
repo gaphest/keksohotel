@@ -1,4 +1,4 @@
-/* global Hotel: true, Gallery: true */
+/* global Hotel: true, Gallery: true, MapElement: true */
 
 'use strict';
 
@@ -7,9 +7,11 @@
   var activeFilter = 'filter-all';
   var hotels = [];
   var filteredHotels = [];
+  var renderedHotels = [];
   var currentPage = 0;
   var PAGE_SIZE = 9;
   var gallery = new Gallery();
+  var map = new MapElement(document.querySelector('.map'));
 
   var filters = document.querySelector('.hotels-filters');
   filters.addEventListener('click', function(evt) {
@@ -36,6 +38,11 @@
 
   getHotels();
 
+  map.onload = function() {
+    map.render();
+  };
+  map.initializeAPI();
+
   /**
    * Отрисовка списка отелей.
    * @param {Array.<Object>} hotelsToRender
@@ -44,46 +51,58 @@
    */
   function renderHotels(hotelsToRender, pageNumber, replace) {
     if (replace) {
-      // Обработчики кликов по отелям до сих пор не удалены
-      var renderedElements = container.querySelectorAll('.hotel');
-      [].forEach.call(renderedElements, function(el) {
-        el.removeEventListener('click', _onClick);
-        // Почему бы его тут же и не убрать?
-        container.removeChild(el);
-      });
+      var el;
+      while ((el = renderedHotels.shift())) {
+        el.remove();
+        el.onGalleryClick = null;
+      }
     }
-
-    var fragment = document.createDocumentFragment();
 
     var from = pageNumber * PAGE_SIZE;
     var to = from + PAGE_SIZE;
     var pageHotels = hotelsToRender.slice(from, to);
 
-    pageHotels.forEach(function(hotel) {
+    renderedHotels = renderedHotels.concat(pageHotels.map(function(hotel) {
       var hotelElement = new Hotel(hotel);
-      hotelElement.render();
-      fragment.appendChild(hotelElement.element);
+      hotelElement.render(container);
 
-      // Показ галереи должен происходить по клику на фон отеля
-      hotelElement.element.addEventListener('click', _onClick);
-    });
+      // Галерея показывает фотографии отеля. Это значит, что при нажатии на отель,
+      // в галерею должны передаваться данные об отеле. Фактически, галерея является
+      // еще одним способом показать отель на странице.
 
-    container.appendChild(fragment);
-  }
+      // NB! Здесь, для создания и обработки кастомного DOM-события используется
+      // коллбэк, который переопределяется вне объекта. Но способов реализовать
+      // требуемое поведение несколько:
+      //
+      // 1. Выполнять событие на window с заданным неймспейсом или специальным
+      //    названием. Система pub/sub работает примерно по такому же принципу:
+      //    все события и подписки происходят на одном элементе.
+      //
+      // 2. Написать свою обработку событий. Это самый распространенный путь.
+      //    Кто-то идет сложным путем и пишет сложную эмуляцию системы событий
+      //    (Google Closure Library), кто-то упрощенную, без фаз и прочих
+      //    сложных понятий. Кто-то эмулирует события через встроенные
+      //    неизпользуемые DOM-элементы или DOM-элемент компонента.
+      //
+      // 3. Добавить публичный коллбэк вроде onGalleryClick. Этот подход напоминает
+      //    DOM Level 0, однако, в отличие от него, в этом подходе можно реализовать
+      //    множественную обработку событий. Правда в этом случае, нельзя говорить
+      //    о событиях, поскольку это именно коллбэки.
+      //
+      hotelElement.onGalleryClick = function() {
+        gallery.data = hotelElement._data;
+        gallery.show();
+      };
 
-  /**
-   * @param {Event} evt
-   */
-  function _onClick(evt) {
-    evt.preventDefault();
-    gallery.show();
+      return hotelElement;
+    }));
   }
 
   /**
    * Установка выбранного фильтра
    * @param {string} id
    * @param {boolean=} force Флаг, при котором игнорируется проверка
-   *     на повторное присвоение фильтра.
+   * на повторное присвоение фильтра.
    */
   function setActiveFilter(id, force) {
     if (activeFilter === id && !force) {
@@ -97,7 +116,7 @@
 
     document.querySelector('#' + id).classList.add('hotel-filter-selected');
 
-    filteredHotels = hotels.slice(0); // Копирование массива
+    filteredHotels = hotels.slice(0);
 
     switch (id) {
       case 'filter-expensive':

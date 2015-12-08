@@ -8,6 +8,11 @@
 html, body {
   margin: 0;
   padding: 0;
+  min-height: 100%;
+}
+
+html {
+  height: 100%;
 }
 
 body {
@@ -82,7 +87,7 @@ body {
   background: #5d93a0 url('../img/welcome-overlay.jpg') no-repeat;
   background-size: cover;
   background-position: center;
-  padding: 56px 0 75px;
+  padding: 0;
 }
 
 .welcome-title,
@@ -95,7 +100,7 @@ body {
 
 .welcome-title {
   font-size: 85px;
-  margin: 60px auto 0;
+  margin: 116px auto 0;
 }
 
 .welcome-stats {
@@ -108,7 +113,7 @@ body {
   background: rgba(242, 247, 248, 0.85);
   border-radius: 4px;
   box-sizing: border-box;
-  margin: 0 auto;
+  margin: 0 auto 75px;
   padding: 27px 20px 25px;
   width: 800px;
 }
@@ -190,12 +195,15 @@ body {
 }
 
 /* Map preview */
-.map {}
+.map {
+  min-height: 68px;
+  transition: height 200ms ease-out;
+  height: 100%;
+  position: relative;
+}
 
 .map-hidden {
-  box-shadow: inset 0 8px 15px rgba(0, 26, 46, 0.36);
-  height: 68px;
-  position: relative;
+  height: 0%;
 }
 
 .map-switch {
@@ -208,6 +216,12 @@ body {
   margin-left: -25px;
   position: absolute;
   width: 50px;
+}
+
+.map-container {
+  height: 100%;
+  position: absolute;
+  width: 100%;
 }
 
 /* Results list. */
@@ -489,7 +503,7 @@ body {
   text-decoration: none;
 }
 
-.gallery-overlay {
+.gallery {
   background: rgba(0, 0, 0, 0.8);
   bottom: 0;
   left: 0;
@@ -500,7 +514,7 @@ body {
   z-index: 1;
 }
 
-.gallery-overlay-close {
+.gallery-close {
   color: #fff;
   cursor: pointer;
   font-size: 40px;
@@ -510,7 +524,7 @@ body {
   top: 0.5ex;
 }
 
-.gallery-overlay-preview {
+.gallery-preview {
   margin-top: 60px;
   max-height: 600px;
   min-height: 300px;
@@ -519,12 +533,12 @@ body {
   width: 100%;
 }
 
-.gallery-overlay-controls {
+.gallery-controls {
   text-align: center;
   margin-bottom: 30px;
 }
 
-.gallery-overlay-control {
+.gallery-control {
   background: url('../img/control-sprite.png') no-repeat;
   cursor: pointer;
   display: inline-block;
@@ -535,15 +549,15 @@ body {
   width: 40px;
 }
 
-.gallery-overlay-control:hover {
+.gallery-control:hover {
   opacity: 1;
 }
 
-.gallery-overlay-control:active {
+.gallery-control:active {
   transform: translate(0, 1px);
 }
 
-.gallery-overlay-control-right {
+.gallery-control-right {
   background-position: -40px 0;
 }
 
@@ -628,3 +642,38 @@ footer .center-wrapper {
 .footer-social-item-vk:hover {
   background-position: -78px -26px;
 }
+
+body.map-mode {
+  overflow: hidden;
+  height: 100%;
+}
+
+/* Полноэкранный режим карты */
+.header,
+.footer,
+.welcome,
+.hotels {
+  overflow: hidden;
+  transition: height 200ms ease-out;
+}
+
+.header {
+  transition: height 200ms ease-out, margin-bottom 200ms ease-out;
+}
+
+.map-mode .header,
+.map-mode .footer,
+.map-mode .hotels {
+  height: 0;
+}
+
+.map-mode .welcome {
+  background-size: 100% auto;
+  height: 20px;
+}
+
+.map-mode .header {
+  margin-bottom: 0;
+  transition: margin-bottom 200ms ease-out;
+}
+
