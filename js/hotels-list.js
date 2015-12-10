@@ -38,9 +38,9 @@
 
   getHotels();
 
-  map.onload = function() {
+  map.onload(function() {
     map.render();
-  };
+  });
   map.initializeAPI();
 
   /**
@@ -177,6 +177,10 @@
       });
 
       updateLoadedHotels(loadedHotels);
+
+      map.onload(function() {
+        map.setHotelsList(loadedHotels);
+      });
     };
 
     xhr.send();

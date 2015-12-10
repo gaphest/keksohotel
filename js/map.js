@@ -1,4 +1,5 @@
 /* global google: true */
+
 /**
  * @fileoverview Модуль для работы с картой Google.
  * @author Igor Alexeenko (igor.alexeenko@htmlacademy.ru)
@@ -40,12 +41,20 @@
   };
 
   /**
+   * @type {Array.<google.maps.Marker>}
+   * @private
+   */
+  MapElement.prototype._markers = null;
+
+  /**
    * Инициализация API Google карт.
    */
   MapElement.prototype.initializeAPI = function() {
     window['__gmapscallback'] = function() {
       this.isLoaded = true;
-      this.onload();
+      this._loadCallbacks.forEach(function(callback) {
+        callback();
+      });
 
       // В этом случае необязательна именованная функция, потому что
       // карта работает на странице все время.
@@ -82,9 +91,20 @@
 
   /**
    * Коллбэк загрузки API карт Google.
-   * @type {Function}
+   * @param {Function} fn
    */
-  MapElement.prototype.onload = null;
+  MapElement.prototype.onload = function(fn) {
+    if (this.isLoaded) {
+      fn();
+      return;
+    }
+
+    if (!this._loadCallbacks) {
+      this._loadCallbacks = [];
+    }
+
+    this._loadCallbacks.push(fn);
+  };
 
   /**
    * Разворачивание и сворачивание карты.
@@ -102,9 +122,36 @@
     this.container.classList.toggle('map-hidden', collapsed);
     document.body.classList.toggle('map-mode', !collapsed);
 
+    if (this._markers) {
+      this._markers.forEach(function(marker) {
+        marker.setMap(this.isCollapsed ? null : this.map);
+      }, this);
+    }
+
     this._collapseAnimationTimeout = setTimeout(function() {
       google.maps.event.trigger(this.map, 'resize');
     }.bind(this), ANIMATION_DURATION);
+  };
+
+  /**
+   * @param {Array.<HotelData>} hotelsList
+   */
+  MapElement.prototype.setHotelsList = function(hotelsList) {
+    this._markers = hotelsList.map(function(hotel) {
+      return new google.maps.Marker({
+        anchor: new google.maps.Point(8, 8),
+        cursor: 'pointer',
+        clickable: true,
+        draggable: false,
+        icon: 'img/marker-icon.png',
+        position: new google.maps.LatLng(
+          hotel.getProperty('location').lat,
+          hotel.getProperty('location').lng),
+        title: hotel.getProperty('name'),
+        scaledSize: new google.maps.Size(16, 16),
+        size: new google.maps.Size(28, 28)
+      });
+    });
   };
 
   window.MapElement = MapElement;
