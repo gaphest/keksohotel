@@ -1,3 +1,5 @@
+/* global HotelBase: true */
+
 'use strict';
 
 (function() {
@@ -53,36 +55,37 @@
   };
 
   /**
-   * @param {Object} data
    * @constructor
+   * @extends {HotelBase}
    */
-  function Hotel(data) {
-    this._data = data;
+  function Hotel() {
     this._onClick = this._onClick.bind(this);
   }
 
+  Hotel.prototype = new HotelBase();
+
   /**
    * Создание элемента отеля из шаблона
-   * @param {Node=} container
+   * @override
    */
-  Hotel.prototype.render = function(container) {
+  Hotel.prototype.render = function() {
     var template = document.querySelector('#hotel-template');
-    var hotelRating = this._data.rating || 6.0;
+    var hotelRating = this.getData().getProperty('rating') || 6.0;
 
     this.element = 'content' in template ?
         template.content.children[0].cloneNode(true) :
-        template.content.children[0].cloneNode(true);
+        template.children[0].cloneNode(true);
 
-    this.element.querySelector('.hotel-stars').classList.add(starsClassName[this._data.stars]);
+    this.element.querySelector('.hotel-stars').classList.add(starsClassName[this.getData().getProperty('stars')]);
     this.element.querySelector('.hotel-rating').classList.add(ratingClassName[Math.floor(hotelRating)]);
 
-    this.element.querySelector('.hotel-name').textContent = this._data.name;
+    this.element.querySelector('.hotel-name').textContent = this.getData().getProperty('name');
     this.element.querySelector('.hotel-rating').textContent = hotelRating.toFixed(1);
-    this.element.querySelector('.hotel-price-value').textContent = this._data.price;
+    this.element.querySelector('.hotel-price-value').textContent = this.getData().getProperty('price');
 
     var amenitiesContainer = this.element.querySelector('.hotel-amenities');
 
-    this._data.amenities.forEach(function(amenity) {
+    this.getData().getProperty('amenities').forEach(function(amenity) {
       var amenityElement = document.createElement('li');
       amenityElement.classList.add('hotel-amenity', amenityClassName[amenity]);
       amenityElement.innerHTML = amenityName[amenity];
@@ -114,52 +117,34 @@
       this.element.classList.add('hotel-nophoto');
     }.bind(this), IMAGE_TIMEOUT);
 
-    backgroundImage.src = this._data.preview;
-
-    if (container) {
-      container.appendChild(this.element);
-      this.container = container;
-    }
+    backgroundImage.src = this.getData().getProperty('preview');
 
     this.element.addEventListener('click', this._onClick);
   };
 
-  /**
-   * Удаление элемента со страницы и удаление обработчиков.
-   */
+  /** @override */
   Hotel.prototype.remove = function() {
-    if (this.container) {
-      this.container.removeChild(this.element);
-      this.container = null;
-    }
-
     this.element.removeEventListener('click', this._onClick);
   };
 
   /**
-   * Обработчик клика по блоку отеля. Используется делегирование, на отель
-   * добавлен один обработчик события, а какие действия выполнять, в зависимости
-   * от того на какой элемент произошел клик, определяется внутри обработчика.
    * @param {Event} evt
    * @private
    */
   Hotel.prototype._onClick = function(evt) {
-    // Галерея должна показываться только по клику на фон элемента, который
-    // содержит фотографию.
-    if (evt.target.classList.contains('hotel') && !this.element.classList.contains('hotel-nophoto')) {
-      if (typeof this.onGalleryClick === 'function') {
-        this.onGalleryClick();
+    // Клик, который транслируется наружу должен происходить
+    // по фону элемента, если у него есть фотография на фоне.
+    if (evt.target.classList.contains('hotel') &&
+      !this.element.classList.contains('hotel-nophoto')) {
+      // Нужно вызвать коллбэк, который будет переопределен снаружи
+      if (typeof this.onClick === 'function') {
+        this.onClick();
       }
     }
   };
 
-  /**
-   * Функция обратного вызова при клике на фон отеля. Переопределяется
-   * снаружи для того, чтобы описать реакцию внешнего мира. Похоже
-   * на события, но сам механизм событий тут не используется.
-   * @type {Function}
-   */
-  Hotel.prototype.onGalleryClick = null;
+  /** @type {?Function} */
+  Hotel.prototype.onClick = null;
 
   window.Hotel = Hotel;
 })();

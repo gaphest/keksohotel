@@ -538,6 +538,23 @@ body {
   margin-bottom: 30px;
 }
 
+.gallery-thumbnails {
+  display: inline-block;
+  height: 40px;
+  margin-top: 20px;
+  min-width: 200px;
+  vertical-align: middle;
+}
+
+.gallery-thumbnails img {
+  border: solid 5px transparent;
+  vertical-align: middle;
+}
+
+.gallery-thumbnails img.selected {
+  border-color: white;
+}
+
 .gallery-control {
   background: url('../img/control-sprite.png') no-repeat;
   cursor: pointer;

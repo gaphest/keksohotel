@@ -10,7 +10,7 @@
   /** @constant {number} */
   var ANIMATION_DURATION = 250;
 
-  /**  @constant {string} */
+  /** @constant {string} */
   var API_KEY = 'AIzaSyD4O4PUGzJW-L6cz6_gGZpWwShDliv8QhI';
 
   /** @constant {string} */
@@ -40,7 +40,7 @@
   };
 
   /**
-   * @static
+   * Инициализация API Google карт.
    */
   MapElement.prototype.initializeAPI = function() {
     window['__gmapscallback'] = function() {

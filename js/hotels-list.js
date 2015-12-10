@@ -1,4 +1,4 @@
-/* global Hotel: true, Gallery: true, MapElement: true */
+/* global Hotel: true, Gallery: true, MapElement: true, HotelData: true */
 
 'use strict';
 
@@ -7,7 +7,7 @@
   var activeFilter = 'filter-all';
   var hotels = [];
   var filteredHotels = [];
-  var renderedHotels = [];
+  var renderedElements = [];
   var currentPage = 0;
   var PAGE_SIZE = 9;
   var gallery = new Gallery();
@@ -51,10 +51,14 @@
    */
   function renderHotels(hotelsToRender, pageNumber, replace) {
     if (replace) {
+      // Поскольку мы больше не работаем только с DOM-элементом
+      // компоненты, нужно переписать удаление. Для начала нужно
+      // сохранить все отрисованные компоненты в еще один массив.
       var el;
-      while ((el = renderedHotels.shift())) {
+      while ((el = renderedElements.shift())) {
+        container.removeChild(el.element);
+        el.onClick = null;
         el.remove();
-        el.onGalleryClick = null;
       }
     }
 
@@ -62,40 +66,43 @@
     var to = from + PAGE_SIZE;
     var pageHotels = hotelsToRender.slice(from, to);
 
-    renderedHotels = renderedHotels.concat(pageHotels.map(function(hotel) {
-      var hotelElement = new Hotel(hotel);
-      hotelElement.render(container);
+    var fragment = document.createDocumentFragment();
+
+    renderedElements = renderedElements.concat(pageHotels.map(function(hotel) {
+      var hotelElement = new Hotel();
+      hotelElement.setData(hotel);
+      hotelElement.render();
+      fragment.appendChild(hotelElement.element);
 
       // Галерея показывает фотографии отеля. Это значит, что при нажатии на отель,
       // в галерею должны передаваться данные об отеле. Фактически, галерея является
       // еще одним способом показать отель на странице.
-
-      // NB! Здесь, для создания и обработки кастомного DOM-события используется
-      // коллбэк, который переопределяется вне объекта. Но способов реализовать
-      // требуемое поведение несколько:
       //
-      // 1. Выполнять событие на window с заданным неймспейсом или специальным
-      //    названием. Система pub/sub работает примерно по такому же принципу:
-      //    все события и подписки происходят на одном элементе.
+      // Идеальным вариантом была бы обработка события на компоненте отеля,
+      // которая владеет информацией об отеле, вместо обработки события
+      // на DOM-элементе. Существует несколько подходов к реализации событий
+      // на компонентах, а не на DOM-узлах.
       //
-      // 2. Написать свою обработку событий. Это самый распространенный путь.
-      //    Кто-то идет сложным путем и пишет сложную эмуляцию системы событий
-      //    (Google Closure Library), кто-то упрощенную, без фаз и прочих
-      //    сложных понятий. Кто-то эмулирует события через встроенные
-      //    неизпользуемые DOM-элементы или DOM-элемент компонента.
+      // 1. Использовать единый для всего приложения объект для работы
+      //    с событиями. Например window. События разных компонент отличаются
+      //    по названию (префиксы, неймспейсы). (шаблон проектирования
+      //    Издатель-Подписчик, Publisher-Subscriber, Pub/Sub).
       //
-      // 3. Добавить публичный коллбэк вроде onGalleryClick. Этот подход напоминает
-      //    DOM Level 0, однако, в отличие от него, в этом подходе можно реализовать
-      //    множественную обработку событий. Правда в этом случае, нельзя говорить
-      //    о событиях, поскольку это именно коллбэки.
+      // 2. Реализовать свою обработку событий. Используются два подхода:
+      //    собственная реализация событий (Google Closure Library, node.js)
+      //    или использование невидимого DOM-элемента (или другого EventTarget'a).
       //
-      hotelElement.onGalleryClick = function() {
-        gallery.data = hotelElement._data;
-        gallery.show();
+      // 3. Использование заранее определенных в объекте функций обратного вызова.
+      //    Аналог DOM Events Level 0 только для компонент.
+      hotelElement.onClick = function() {
+        gallery.setData(hotelElement.getData());
+        gallery.render();
       };
 
       return hotelElement;
     }));
+
+    container.appendChild(fragment);
   }
 
   /**
@@ -121,13 +128,13 @@
     switch (id) {
       case 'filter-expensive':
         filteredHotels = filteredHotels.sort(function(a, b) {
-          return b.price - a.price;
+          return b.getPrice() - a.getPrice();
         });
         break;
 
       case 'filter-cheap':
         filteredHotels = filteredHotels.sort(function(a, b) {
-          return a.price - b.price;
+          return a.getPrice() - b.getPrice();
         });
         break;
 
@@ -164,6 +171,11 @@
     xhr.onload = function(evt) {
       var rawData = evt.target.response;
       var loadedHotels = JSON.parse(rawData);
+
+      loadedHotels = loadedHotels.map(function(hotel) {
+        return new HotelData(hotel);
+      });
+
       updateLoadedHotels(loadedHotels);
     };
 
