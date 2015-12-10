@@ -75,7 +75,7 @@
   MapElement.prototype.render = function() {
     this.map = new google.maps.Map(this.container.querySelector('.map-container'), {
       center: new google.maps.LatLng(TOKIO_CENTER.lat, TOKIO_CENTER.lng),
-      scrollWheel: false,
+      scrollwheel: false,
       zoom: 12
     });
   };
