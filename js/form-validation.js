@@ -1,8 +1,6 @@
-/* global docCookies: true */
-
 'use strict';
 
-(function() {
+define(function() {
   // Валидация формы:
   // 1. ограничения на минимальное/максимальное значение
 
@@ -114,4 +112,4 @@
   function getFormattedDate(date) {
     return date.toISOString().substring(0, 10);
   }
-})();
+});

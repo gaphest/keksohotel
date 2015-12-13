@@ -1,8 +1,8 @@
-/* global HotelBase: true */
-
 'use strict';
 
-(function() {
+define([
+  'hotel-base'
+], function(HotelBase) {
   /**
    * @constructor
    * @extends {HotelBase}
@@ -25,7 +25,7 @@
 
     var thumbnailsContainer = this.element.querySelector('.gallery-thumbnails');
 
-    this.getData().pictures.forEach(function(pic) {
+    this.getData().getPictures().forEach(function(pic) {
       var picture = new Image();
       picture.height = 40;
       picture.src = pic;
@@ -68,7 +68,7 @@
     this.element.querySelectorAll('.gallery-thumbnails img')[i].classList.add('selected');
 
     var image = new Image();
-    image.src = this.getData().pictures[i];
+    image.src = this.getData().getPictures()[i];
 
     var previewContainer = this.element.querySelector('.gallery-preview');
     while (previewContainer.firstChild) {
@@ -78,5 +78,5 @@
     previewContainer.appendChild(image);
   };
 
-  window.Gallery = Gallery;
-})();
+  return Gallery;
+});

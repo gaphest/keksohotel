@@ -1,10 +1,18 @@
-/* global Hotel: true, Gallery: true, MapElement: true, HotelData: true */
-
 'use strict';
 
-(function() {
+requirejs.config({
+  baseUrl: 'js'
+});
+
+define([
+  'hotel',
+  'gallery',
+  'map',
+  'hotel-data',
+  'form-validation'
+], function(Hotel, Gallery, MapElement, HotelData) {
   var container = document.querySelector('.hotels-list');
-  var activeFilter = 'filter-all';
+  var activeFilter = localStorage.getItem('activeFilter') || 'filter-all';
   var hotels = [];
   var filteredHotels = [];
   var renderedElements = [];
@@ -74,26 +82,6 @@
       hotelElement.render();
       fragment.appendChild(hotelElement.element);
 
-      // Галерея показывает фотографии отеля. Это значит, что при нажатии на отель,
-      // в галерею должны передаваться данные об отеле. Фактически, галерея является
-      // еще одним способом показать отель на странице.
-      //
-      // Идеальным вариантом была бы обработка события на компоненте отеля,
-      // которая владеет информацией об отеле, вместо обработки события
-      // на DOM-элементе. Существует несколько подходов к реализации событий
-      // на компонентах, а не на DOM-узлах.
-      //
-      // 1. Использовать единый для всего приложения объект для работы
-      //    с событиями. Например window. События разных компонент отличаются
-      //    по названию (префиксы, неймспейсы). (шаблон проектирования
-      //    Издатель-Подписчик, Publisher-Subscriber, Pub/Sub).
-      //
-      // 2. Реализовать свою обработку событий. Используются два подхода:
-      //    собственная реализация событий (Google Closure Library, node.js)
-      //    или использование невидимого DOM-элемента (или другого EventTarget'a).
-      //
-      // 3. Использование заранее определенных в объекте функций обратного вызова.
-      //    Аналог DOM Events Level 0 только для компонент.
       hotelElement.onClick = function() {
         gallery.setData(hotelElement.getData());
         gallery.render();
@@ -116,7 +104,7 @@
       return;
     }
 
-    var selectedElement = document.querySelector('#' + activeFilter);
+    var selectedElement = document.querySelector('.hotel-filter-selected');
     if (selectedElement) {
       selectedElement.classList.remove('hotel-filter-selected');
     }
@@ -140,18 +128,18 @@
 
       case 'filter-2stars':
         filteredHotels = filteredHotels.sort(function(a, b) {
-          return a.stars - b.stars;
+          return a.getProperty('stars') - b.getProperty('stars');
         }).filter(function(item) {
-          return item.stars > 2;
+          return item.getProperty('stars') > 2;
         });
 
         break;
 
       case 'filter-6rating':
         filteredHotels = filteredHotels.sort(function(a, b) {
-          return a.rating - b.rating;
+          return a.getProperty('rating') - b.getProperty('rating');
         }).filter(function(item) {
-          return item.rating >= 6;
+          return item.getProperty('rating') >= 6;
         });
         break;
     }
@@ -160,6 +148,7 @@
     renderHotels(filteredHotels, currentPage, true);
 
     activeFilter = id;
+    localStorage.setItem('activeFilter', id);
   }
 
   /**
@@ -197,4 +186,4 @@
 
     setActiveFilter(activeFilter, true);
   }
-})();
+});

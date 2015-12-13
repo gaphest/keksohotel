@@ -6,7 +6,7 @@
 
 'use strict';
 
-(function() {
+define(function() {
   /**
    * @constructor
    */
@@ -33,5 +33,5 @@
     return this._data;
   };
 
-  window.HotelBase = HotelBase;
-})();
+  return HotelBase;
+});

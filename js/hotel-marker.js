@@ -5,7 +5,7 @@
 
 'use strict';
 
-(function() {
+define(function() {
   /**
    * @constructor
    */
@@ -15,5 +15,5 @@
 
   HotelMarker.prototype.hide = function() {};
 
-  window.HotelMarker = HotelMarker;
-})();
+  return HotelMarker;
+});

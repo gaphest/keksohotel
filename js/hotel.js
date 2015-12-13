@@ -1,8 +1,9 @@
-/* global HotelBase: true */
-
 'use strict';
 
-(function() {
+define([
+  'hotel-data',
+  'hotel-base'
+], function(HotelData, HotelBase) {
   /**
    * Массив соотсветствий рейтинга отеля DOM-классу элементам
    * со звездами.
@@ -146,5 +147,5 @@
   /** @type {?Function} */
   Hotel.prototype.onClick = null;
 
-  window.Hotel = Hotel;
-})();
+  return Hotel;
+});

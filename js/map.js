@@ -7,7 +7,7 @@
 
 'use strict';
 
-(function() {
+define(function() {
   /** @constant {number} */
   var ANIMATION_DURATION = 250;
 
@@ -56,12 +56,17 @@
         callback();
       });
 
-      // В этом случае необязательна именованная функция, потому что
-      // карта работает на странице все время.
+      // Клик по переключателю напрямую влияет на состояние
+      // элемента. При работе с адресной строкой, поведение
+      // должно отличаться: клик должен менять только состояние
+      // адресной строки, а карта должа сама принять решение
+      // что делать при изменении адреса страницы.
       this._toggle.addEventListener('click', function() {
-        // Переключатель как сворачивает, так и разворачивает карту.
-        this.setCollapsed(!this.isCollapsed);
+        location.hash = location.hash.indexOf('map') !== -1 ? '' : 'map'; 
       }.bind(this));
+
+      window.addEventListener('hashchange', this._onHashChange.bind(this));
+      this.restoreFromHash();
     }.bind(this);
 
     // JSONP загрузка API карт Google.
@@ -104,6 +109,17 @@
     }
 
     this._loadCallbacks.push(fn);
+  };
+  
+  /**
+   * @private
+   */
+  MapElement.prototype._onHashChange = function() {
+    this.restoreFromHash();
+  };
+
+  MapElement.prototype.restoreFromHash = function() {
+    this.setCollapsed(location.hash.indexOf('map') === -1);
   };
 
   /**
@@ -154,5 +170,5 @@
     });
   };
 
-  window.MapElement = MapElement;
-})();
+  return MapElement;
+});

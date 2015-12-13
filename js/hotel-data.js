@@ -5,7 +5,7 @@
 
 'use strict';
 
-(function() {
+define(function() {
   /**
    * @param {Object} data
    * @constructor
@@ -45,5 +45,5 @@
     return null;
   };
 
-  window.HotelData = HotelData;
-})();
+  return HotelData;
+});
