@@ -38,6 +38,7 @@ define(function() {
     this.isCollapsed = true;
 
     this._toggle = this.container.querySelector('.map-switch');
+    this._onToggleClick = this._onToggleClick.bind(this);
   };
 
   /**
@@ -61,10 +62,7 @@ define(function() {
       // должно отличаться: клик должен менять только состояние
       // адресной строки, а карта должа сама принять решение
       // что делать при изменении адреса страницы.
-      this._toggle.addEventListener('click', function() {
-        location.hash = location.hash.indexOf('map') !== -1 ? '' : 'map'; 
-      }.bind(this));
-
+      this._toggle.addEventListener('click', this._onToggleClick);
       window.addEventListener('hashchange', this._onHashChange.bind(this));
       this.restoreFromHash();
     }.bind(this);
@@ -110,7 +108,14 @@ define(function() {
 
     this._loadCallbacks.push(fn);
   };
-  
+
+  /**
+  * @private
+  */
+  MapElement.prototype._onToggleClick = function() {
+    location.hash = location.hash.indexOf('map') !== -1 ? '' : 'map';
+  };
+
   /**
    * @private
    */
