@@ -2,11 +2,10 @@ root: true
 
 globals:
   define: true
-  docCookies: true
-  requirejs: true
 
 env:
   browser: true
+  node: true
 
 extends:
   "eslint:recommended"
@@ -67,7 +66,7 @@ rules:
   no-undef-init: 2
   no-undefined: 2
   no-unused-expressions: 2
-  no-unused-vars: [2, {vars: "all", args: "after-used"}]
+  no-unused-vars: 0
   no-with: 2
   quotes: [2, "single"]
   radix: 2
