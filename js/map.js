@@ -8,6 +8,17 @@
 'use strict';
 
 define(function() {
+  /**
+   * @param {google.maps.Size} tileSize
+   * @constructor
+   */
+  var MapOverlay = function(tileSize) {
+    this.tileSize = tileSize;
+  };
+
+  MapOverlay.prototype.getTile = window.getMapTile;
+
+
   /** @constant {number} */
   var ANIMATION_DURATION = 250;
 
@@ -90,6 +101,9 @@ define(function() {
       scrollwheel: false,
       zoom: 12
     });
+
+    this.map.overlayMapTypes.insertAt(0,
+        new MapOverlay(new google.maps.Size(256, 256)));
   };
 
   /**
