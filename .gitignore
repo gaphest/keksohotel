@@ -5,5 +5,5 @@ Thumbs.db
 .idea
 *.sublime*
 *.log
-bin/
-Mockup.psd
+*.psd
+*.ai

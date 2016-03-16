@@ -1,22 +1,31 @@
-# Проект «Кексобукинг»
+# Личный проект «{{projectTitle}}»
 
-* Студент: [Игорь Алексеенко](https://htmlacademy.ru/profile/id100868).
-* Наставник: `Инструктор Кекс`.
+[![Build status][travis-image]][travis-url]
+[![Dependency status][dependency-image]][dependency-url]
+
+* Студент: [{{userName}}](https://htmlacademy.ru/profile/id{{userId}}).
+* Наставник: `Неизвестно`.
 
 ### Немного о себе
 
 ##### Вы прошли интенсивный онлайн-курс «Базовый HTML и CSS»?
-`Да, успешно, как наставник`.
+`Да, успешно | Да, но не защитил проект | Нет, я сразу записался на базовый JS`.
 
 ##### Вы прошли интенсивный онлайн-курс «Продвинутый HTML и CSS»?
-`Нет, я сразу записался на базовый JS`.
+`Да, успешно | Да, но не защитил проект | Нет, я сразу записался на базовый JS`.
 
---
+---
 
-Не удаляйте и не обращайте внимание на файлы: `.editorconfig`, `.eslintrc`, `.gitignore`, `.travis.yml`, `Makefile`, `package.json`.
+_Не удаляйте и не обращайте внимание на файлы:_<br>
+_`.editorconfig`, `.eslintignore`, `.eslintrc`, `.gitignore`, `.travis.yml`, `Makefile`, `package.json`._
 
---
+---
 
-<a href="https://htmlacademy.ru/js_intensive"><img align="left" width="50" height="50" title="HTML Academy" src="https://htmlacademy.ru/static/img/logo-github.svg"></a>
+<a href="https://htmlacademy.ru/js_intensive"><img align="left" width="50" height="50" title="HTML Academy" src="https://up.htmlacademy.ru/static/img/intensive/javascript/logo-for-github.svg"></a>
 
-Репозиторий создан для обучения на интенсивном онлайн-курсе «[Базовый JavaScript](https://htmlacademy.ru/js_intensive)» от [HTML Academy](https://htmlacademy.ru).
+Репозиторий создан для обучения на интенсивном онлайн-курсе «[Базовый JavaScript](https://htmlacademy.ru/js_intensive)» от [HTML Academy](https://htmlacademy.ru).
+
+[travis-image]: https://travis-ci.org/htmlacademy-javascript/{{userId}}-{{projectName}}.svg?branch=master
+[travis-url]: https://travis-ci.org/htmlacademy-javascript/{{userId}}-{{projectName}}
+[dependency-image]: https://david-dm.org/htmlacademy-javascript/{{userId}}-{{projectName}}.svg?style=flat-square
+[dependency-url]: https://david-dm.org/htmlacademy-javascript/{{userId}}-{{projectName}}
