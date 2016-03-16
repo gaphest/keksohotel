@@ -2,24 +2,18 @@
   "name": "100868-keksobooking",
   "version": "0.1.0",
   "private": true,
-  "description": "Обучающий проект «Кексобукинг» от HTML Academy",
-  "author": "o0",
-  "repository": {
-    "type": "git",
-    "url": ""
-  },
-  "bugs": {
-    "url": ""
-  },
-  "homepage": "",
-  "devDependencies": {
-    "eslint": "^1.8.0",
-    "http-server": "^0.8.5"
+  "description": "Учебный проект «Кексобукинг» от HTML Academy",
+  "author": "Igor Alexeenko (igor.alexeenko@htmlacademy.ru)",
+  "homepage": "o0.github.io/keksobooking",
+  "dependencies": {
+    "eslint": "^2.4.0",
+    "webpack": "^1.12.14",
+    "webpack-dev-server": "^1.14.1"
   },
   "scripts": {
-    "gosha": "make",
+    "gosha": "webpack --config webpack.config.js ./js/main.js",
     "test": "eslint js/",
-    "start": "http-server ."
+    "start": "webpack-dev-server --watch --config webpack.config.js"
   },
   "engines": {
     "node": "^5.0.0"
